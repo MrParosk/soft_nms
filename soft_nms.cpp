@@ -1,33 +1,73 @@
 #include <torch/torch.h>
-// #include <torch/slicing.h>
-#include <iostream>
+#include <tuple>
+#include <ostream>
+
+torch::Tensor calculate_area(const torch::Tensor &dets)
+{
+    auto x1 = dets.index({torch::indexing::Slice(), 0});
+    auto y1 = dets.index({torch::indexing::Slice(), 1});
+    auto x2 = dets.index({torch::indexing::Slice(), 2});
+    auto y2 = dets.index({torch::indexing::Slice(), 3});
+    auto areas = (x2 - x1 + 1) * (y2 - y1 + 1);
+    return areas;
+};
+
+torch::Tensor calculate_iou(const torch::Tensor &dets, const torch::Tensor &areas, const int i)
+{
+    auto xx1 = torch::maximum(dets.index({i, 0}),
+                              dets.index({torch::indexing::Slice(i + 1, torch::indexing::None), 0}));
+
+    auto yy1 = torch::maximum(dets.index({i, 1}),
+                              dets.index({torch::indexing::Slice(i + 1, torch::indexing::None), 1}));
+
+    auto xx2 = torch::minimum(dets.index({i, 2}),
+                              dets.index({torch::indexing::Slice(i + 1, torch::indexing::None), 2}));
+
+    auto yy2 = torch::minimum(dets.index({i, 3}),
+                              dets.index({torch::indexing::Slice(i + 1, torch::indexing::None), 3}));
+
+    auto w = torch::maximum(torch::zeros_like(xx1), xx2 - xx1 + 1);
+    auto h = torch::maximum(torch::zeros_like(yy1), yy2 - yy1 + 1);
+
+    auto intersection = w * h;
+    auto union_ = areas.index({i}) + areas.index({torch::indexing::Slice(i + 1, torch::indexing::None)}) - intersection;
+    auto iou = torch::div(intersection, union_);
+    return iou;
+}
 
 torch::Tensor soft_nms(
     const torch::Tensor &dets,
     const torch::Tensor &scores,
+    const float sigma,
     const float iou_threshold)
 {
-
     int num_element = dets.sizes()[0];
-    torch::Tensor indicies = torch::arange(0, num_element, torch::dtype(torch::kFloat32)).view({num_element, 1});
+    auto indicies = torch::arange(0, num_element, torch::dtype(torch::kFloat32)).view({num_element, 1});
     auto dets_indicies = torch::cat({dets, indicies}, 1);
 
-    auto x1 = dets_indicies.index({torch::indexing::Slice(), 0});
-    auto y1 = dets_indicies.index({torch::indexing::Slice(), 1});
-    auto x2 = dets_indicies.index({torch::indexing::Slice(), 2});
-    auto y2 = dets_indicies.index({torch::indexing::Slice(), 3});
-    auto areas = (x2 - x1 + 1) * (y2 - y1 + 1);
+    torch::Tensor sorted_scores;
+    torch::Tensor sort_indicies;
+
+    std::tie(sorted_scores, sort_indicies) = torch::sort(scores, 0, true);
+    auto sorted_dets = dets_indicies.index({sort_indicies});
+
+    auto areas = calculate_area(sorted_dets);
 
     for (int i = 0; i < num_element; i++)
     {
+        auto iou = calculate_iou(sorted_dets, areas, i);
+        auto weight = torch::exp(-(iou * iou) / sigma);
+        sorted_scores.index({torch::indexing::Slice(i + 1, torch::indexing::None)}) = weight * sorted_scores.index({torch::indexing::Slice(i + 1, torch::indexing::None)});
     }
 
-    return dets_indicies;
+    auto keep = sorted_dets.index({torch::indexing::Slice(), 4}).index({sorted_scores > iou_threshold});
+    return keep;
 };
 
 int main()
 {
-    auto dets = torch::tensor({{400, 200, 200, 200}, {400, 200, 200, 200}});
-    auto scores = torch::tensor({0.9, 0.5});
-    auto x = soft_nms(dets, scores, 0.5);
+    auto dets = torch::tensor({{20, 20, 40, 40}, {10, 10, 20, 20}, {20, 20, 35, 35}}, torch::dtype(torch::kFloat32));
+    auto scores = torch::tensor({0.5, 0.9, 0.11}, torch::dtype(torch::kFloat32));
+    auto keep = soft_nms(dets, scores, 0.5, 0.001);
+    std::cout << keep << std::endl;
 }
