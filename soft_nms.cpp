@@ -8,9 +8,9 @@ torch::Tensor calculate_area(const torch::Tensor &dets)
     auto y1 = dets.index({torch::indexing::Slice(), 1});
     auto x2 = dets.index({torch::indexing::Slice(), 2});
     auto y2 = dets.index({torch::indexing::Slice(), 3});
-    auto areas = (x2 - x1 + 1) * (y2 - y1 + 1);
+    auto areas = (x2 - x1) * (y2 - y1);
     return areas;
-};
+}
 
 torch::Tensor calculate_iou(const torch::Tensor &dets, const torch::Tensor &areas, const int i)
 {
@@ -26,13 +26,28 @@ torch::Tensor calculate_iou(const torch::Tensor &dets, const torch::Tensor &area
     auto yy2 = torch::minimum(dets.index({i, 3}),
                               dets.index({torch::indexing::Slice(i + 1, torch::indexing::None), 3}));
 
-    auto w = torch::maximum(torch::zeros_like(xx1), xx2 - xx1 + 1);
-    auto h = torch::maximum(torch::zeros_like(yy1), yy2 - yy1 + 1);
+    auto w = torch::maximum(torch::zeros_like(xx1), xx2 - xx1);
+    auto h = torch::maximum(torch::zeros_like(yy1), yy2 - yy1);
 
     auto intersection = w * h;
     auto union_ = areas.index({i}) + areas.index({torch::indexing::Slice(i + 1, torch::indexing::None)}) - intersection;
     auto iou = torch::div(intersection, union_);
     return iou;
+}
+
+std::tuple<torch::Tensor, torch::Tensor> create_sorted_dets(const torch::Tensor &dets, const torch::Tensor &scores)
+{
+    int num_element = dets.sizes()[0];
+
+    // Need the indicies since we will sort the tensors. However want to return the original indicies.
+    auto indicies = torch::arange(0, num_element, torch::dtype(torch::kFloat32)).view({num_element, 1});
+    auto dets_indicies = torch::cat({dets, indicies}, 1);
+
+    // The soft-nms assumes that dets are sorted by scores
+    torch::Tensor sorted_scores, sort_indicies;
+    std::tie(sorted_scores, sort_indicies) = torch::sort(scores, 0, true);
+    auto sorted_dets = dets_indicies.index({sort_indicies});
+    return std::tie(sorted_dets, sorted_scores);
 }
 
 torch::Tensor soft_nms(
@@ -41,18 +56,11 @@ torch::Tensor soft_nms(
     const float sigma,
     const float iou_threshold)
 {
-    int num_element = dets.sizes()[0];
-    auto indicies = torch::arange(0, num_element, torch::dtype(torch::kFloat32)).view({num_element, 1});
-    auto dets_indicies = torch::cat({dets, indicies}, 1);
-
-    torch::Tensor sorted_scores;
-    torch::Tensor sort_indicies;
-
-    std::tie(sorted_scores, sort_indicies) = torch::sort(scores, 0, true);
-    auto sorted_dets = dets_indicies.index({sort_indicies});
-
+    torch::Tensor sorted_dets, sorted_scores;
+    std::tie(sorted_dets, sorted_scores) = create_sorted_dets(dets, scores);
     auto areas = calculate_area(sorted_dets);
 
+    int num_element = dets.sizes()[0];
     for (int i = 0; i < num_element; i++)
     {
         auto iou = calculate_iou(sorted_dets, areas, i);
@@ -60,14 +68,15 @@ torch::Tensor soft_nms(
         sorted_scores.index({torch::indexing::Slice(i + 1, torch::indexing::None)}) = weight * sorted_scores.index({torch::indexing::Slice(i + 1, torch::indexing::None)});
     }
 
+    std::cout << sorted_scores << std::endl;
     auto keep = sorted_dets.index({torch::indexing::Slice(), 4}).index({sorted_scores > iou_threshold});
     return keep;
-};
+}
 
 int main()
 {
     auto dets = torch::tensor({{20, 20, 40, 40}, {10, 10, 20, 20}, {20, 20, 35, 35}}, torch::dtype(torch::kFloat32));
     auto scores = torch::tensor({0.5, 0.9, 0.11}, torch::dtype(torch::kFloat32));
-    auto keep = soft_nms(dets, scores, 0.5, 0.001);
+    auto keep = soft_nms(dets, scores, 0.5, 0.05);
     std::cout << keep << std::endl;
 }
