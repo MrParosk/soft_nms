@@ -1,3 +1,3 @@
-libtorch_path=/home/erik/git/ts_ops/libtorch/
+libtorch_path="$(python -c 'import torch.utils; print(torch.utils.cmake_prefix_path)')"
 
-(cd build && cmake -DCMAKE_PREFIX_PATH=$libtorch_path .. && cmake --build . --config Release && ./ts_ops)
+(cd build && cmake -DCMAKE_PREFIX_PATH=$libtorch_path .. && make -j)

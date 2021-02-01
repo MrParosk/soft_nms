@@ -1,6 +1,5 @@
 #include <torch/torch.h>
 #include <tuple>
-#include <ostream>
 
 torch::Tensor calculate_area(const torch::Tensor &dets)
 {
@@ -53,8 +52,8 @@ std::tuple<torch::Tensor, torch::Tensor> create_sorted_dets(const torch::Tensor 
 torch::Tensor soft_nms(
     const torch::Tensor &dets,
     const torch::Tensor &scores,
-    const float sigma,
-    const float iou_threshold)
+    const double sigma,
+    const double iou_threshold)
 {
     torch::Tensor sorted_dets, sorted_scores;
     std::tie(sorted_dets, sorted_scores) = create_sorted_dets(dets, scores);
@@ -68,15 +67,12 @@ torch::Tensor soft_nms(
         sorted_scores.index({torch::indexing::Slice(i + 1, torch::indexing::None)}) = weight * sorted_scores.index({torch::indexing::Slice(i + 1, torch::indexing::None)});
     }
 
-    std::cout << sorted_scores << std::endl;
     auto keep = sorted_dets.index({torch::indexing::Slice(), 4}).index({sorted_scores > iou_threshold});
+    keep = keep.to(torch::kInt);
     return keep;
 }
 
-int main()
+TORCH_LIBRARY(ts_ops, m)
 {
-    auto dets = torch::tensor({{20, 20, 40, 40}, {10, 10, 20, 20}, {20, 20, 35, 35}}, torch::dtype(torch::kFloat32));
-    auto scores = torch::tensor({0.5, 0.9, 0.11}, torch::dtype(torch::kFloat32));
-    auto keep = soft_nms(dets, scores, 0.5, 0.05);
-    std::cout << keep << std::endl;
+    m.def("soft_nms", soft_nms);
 }
