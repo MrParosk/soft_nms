@@ -68,11 +68,6 @@ torch::Tensor soft_nms(
     }
 
     auto keep = sorted_dets.index({torch::indexing::Slice(), 4}).index({sorted_scores > iou_threshold});
-    keep = keep.to(torch::kInt);
+    keep = keep.to(torch::kLong);
     return keep;
-}
-
-TORCH_LIBRARY(ts_ops, m)
-{
-    m.def("soft_nms", soft_nms);
 }

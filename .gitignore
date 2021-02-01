@@ -1,3 +1,4 @@
 build/
 libtorch/
 .vscode/
+ts_ops/__pycache__/
