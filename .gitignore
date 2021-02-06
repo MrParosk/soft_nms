@@ -1,6 +1,6 @@
 build/
 libtorch/
 .vscode/
-ts_ops/__pycache__/
-ts_ops.egg-info/
+pt_soft_nms/__pycache__/
+pt_soft_nms.egg-info/
 soft_nms.so

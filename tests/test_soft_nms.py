@@ -1,7 +1,7 @@
 import unittest
 import torch
 from copy import deepcopy
-from ts_ops import soft_nms
+from pt_soft_nms import soft_nms
 
 
 class TestCorrectImplemented(unittest.TestCase):

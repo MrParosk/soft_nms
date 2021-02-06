@@ -11,7 +11,7 @@ assert torch_ver >= [1, 7], "Requires PyTorch >= 1.7"
 
 def get_extension():
     this_dir = path.dirname(path.abspath(__file__))
-    extensions_dir = path.join(this_dir, "ts_ops", "csrc")
+    extensions_dir = path.join(this_dir, "pt_soft_nms", "csrc")
     sources = glob.glob(path.join(extensions_dir,  "*.cpp"))
 
     include_dirs = [extensions_dir]
@@ -26,9 +26,9 @@ def get_extension():
     return extensions
 
 
-setup(name="ts_ops",
+setup(name="pt_soft_nms",
       version="0.1",
-      packages=("ts_ops",),
+      packages=("pt_soft_nms",),
       description="PyTorch implementation of the soft-nms algorithm",
       install_requires=[],
       ext_modules=get_extension(),
