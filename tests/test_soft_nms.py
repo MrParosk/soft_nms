@@ -27,7 +27,7 @@ class TestScritable(unittest.TestCase):
     def setUp(self):
         class TestingModule(torch.nn.Module):
             def forward(self, boxes, scores):
-                return torch.ops.ts_ops.soft_nms(boxes, scores, 0.5, 0.05)
+                return soft_nms(boxes, scores, 0.5, 0.05)
 
         self.module = TestingModule()
 
