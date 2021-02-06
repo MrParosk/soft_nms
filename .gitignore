@@ -2,3 +2,5 @@ build/
 libtorch/
 .vscode/
 ts_ops/__pycache__/
+ts_ops.egg-info/
+ts_ops.so

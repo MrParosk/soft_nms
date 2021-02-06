@@ -30,7 +30,7 @@ def get_extension():
 
 
 setup(name="ts_ops",
-      version="1.0",
+      version="0.1",
       packages=("ts_ops",),
       description="soft-nms impl",
       install_requires=[],
