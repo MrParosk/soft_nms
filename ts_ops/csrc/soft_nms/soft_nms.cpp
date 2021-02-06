@@ -1,5 +1,4 @@
-#include <torch/torch.h>
-#include <tuple>
+#include "soft_nms.h"
 
 torch::Tensor calculate_area(const torch::Tensor &dets)
 {
