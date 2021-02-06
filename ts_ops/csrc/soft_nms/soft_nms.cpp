@@ -70,6 +70,7 @@ std::tuple<torch::Tensor, torch::Tensor> soft_nms(
 {
     int num_element = boxes.sizes()[0];
     auto indicies = torch::arange(0, num_element, torch::dtype(torch::kFloat32)).view({num_element, 1});
+    indicies = indicies.to(boxes.device());
     auto boxes_indicies = torch::cat({boxes, indicies}, 1);
 
     auto scores_updated = scores.clone();

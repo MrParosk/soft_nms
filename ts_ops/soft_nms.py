@@ -19,4 +19,9 @@ def soft_nms(boxes: torch.Tensor, scores: torch.Tensor, sigma: float, score_thre
             by soft-nms, sorted in decreasing order of scores
     """
 
+    assert len(
+        boxes.shape) == 2 and boxes.shape[-1] == 4, f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
+    assert len(
+        scores.shape) == 1, f"scores has wrong shape, expected (N,) got {scores.shape}"
+
     return torch.ops.ts_ops.soft_nms(boxes, scores, sigma, score_threshold)
