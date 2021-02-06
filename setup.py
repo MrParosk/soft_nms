@@ -32,7 +32,7 @@ def get_extension():
 setup(name="ts_ops",
       version="0.1",
       packages=("ts_ops",),
-      description="soft-nms impl",
+      description="Pytorch implementation of the soft-nms algorithm",
       install_requires=[],
       ext_modules=get_extension(),
       cmdclass={"build_ext": BuildExtension.with_options(
