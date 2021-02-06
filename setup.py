@@ -20,7 +20,7 @@ def get_extension():
     include_dirs = [extensions_dir]
     extensions = [
         CppExtension(
-            "ts_ops._C",
+            "ts_ops",
             sources,
             include_dirs=include_dirs
         )
@@ -35,5 +35,6 @@ setup(name="ts_ops",
       description="soft-nms impl",
       install_requires=[],
       ext_modules=get_extension(),
-      cmdclass={"build_ext": BuildExtension}
+      cmdclass={"build_ext": BuildExtension.with_options(
+          no_python_abi_suffix=True)}
       )
