@@ -12,7 +12,7 @@ assert torch_ver >= [1, 7], "Requires PyTorch >= 1.7"
 def get_extension():
     this_dir = path.dirname(path.abspath(__file__))
     extensions_dir = path.join(this_dir, "pt_soft_nms", "csrc")
-    sources = glob.glob(path.join(extensions_dir,  "*.cpp"))
+    sources = glob.glob(path.join(extensions_dir, "*.cpp"))
 
     include_dirs = [extensions_dir]
     extensions = [
