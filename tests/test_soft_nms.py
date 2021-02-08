@@ -19,6 +19,7 @@ class TestCorrectImplemented(unittest.TestCase):
         _, keep = soft_nms(self.boxes, self.scores, 0.5, 0.1)
         _ = self.boxes[keep, :]
 
+    @unittest.skipIf(not torch.cuda.is_available(), "CUDA not available")
     def test_gpu(self):
         _ = soft_nms(self.boxes.cuda(), self.scores.cuda(), 0.5, 0.1)
 
@@ -35,6 +36,7 @@ class TestScritable(unittest.TestCase):
         m = deepcopy(self.module).cpu()
         _ = torch.jit.script(m)
 
+    @unittest.skipIf(not torch.cuda.is_available(), "CUDA not available")
     def test_scriptable_gpu(self):
         m = deepcopy(self.module).cuda()
         _ = torch.jit.script(m)
