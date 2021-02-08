@@ -3,4 +3,5 @@ libtorch/
 .vscode/
 pt_soft_nms/__pycache__/
 pt_soft_nms.egg-info/
+tests/__pycache__/
 soft_nms.so
