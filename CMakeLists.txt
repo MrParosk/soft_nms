@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(ts_ops)
+project(soft_nms)
 
 find_package(Torch REQUIRED)
 
-# add_executable(ts_ops soft_nms.cpp)
-add_library(ts_ops SHARED ts_ops/csrc/ops.cpp)
-target_link_libraries(ts_ops "${TORCH_LIBRARIES}")
-set_property(TARGET ts_ops PROPERTY CXX_STANDARD 14)
+add_library(soft_nms SHARED pt_soft_nms/csrc/op.cpp)
+target_link_libraries(soft_nms "${TORCH_LIBRARIES}")
+set_property(TARGET soft_nms PROPERTY CXX_STANDARD 14)
