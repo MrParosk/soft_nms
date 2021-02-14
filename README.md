@@ -1,6 +1,6 @@
 # Soft-nms in PyTorch
 
-![master](https://github.com/MrParosk/soft_nms/workflows/master/badge.svg?branch=master)
+![master](https://github.com/MrParosk/soft_nms/workflows/master/badge.svg?branch=master) [![codecov](https://codecov.io/gh/MrParosk/soft_nms/branch/master/graph/badge.svg?token=VWTV2Q54XR)](https://codecov.io/gh/MrParosk/soft_nms)
 
 Implementation of the soft-nms algorithm described in the paper: [Soft-NMS -- Improving Object Detection With One Line of Code](https://arxiv.org/abs/1704.04503)
 
