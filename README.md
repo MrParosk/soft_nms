@@ -9,7 +9,7 @@ The algorithm is implemented in PyTorch's C++ frontend for better performance.
 Make sure that you have installed PyTorch, version 1.7 or higher. Install the package by
 
 ```Shell
-pip install git+https://github.com/MrParosk/ts_ops.git
+pip install git+https://github.com/MrParosk/soft_nms.git
 ```
 
 Note that the installation process is tested on linux and with anaconda. It might work on other platforms, but are not tested.
