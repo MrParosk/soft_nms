@@ -37,7 +37,7 @@ jobs:
         pytest tests
     - name: Code coverage # Need to install in developer mode for it to get coverage report for installed package
       run: |
-        pip uninstall pt_soft_nms
+        pip uninstall -y pt_soft_nms
         pip install -e .
         pytest --cov=pt_soft_nms --cov-report=xml        
     - name: Upload coverage to Codecov
