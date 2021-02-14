@@ -60,7 +60,6 @@ def batched_soft_nms(boxes: torch.Tensor, scores: torch.Tensor, idxs: torch.Tens
 
     result_mask = scores.new_zeros(scores.size(), dtype=torch.bool)
     for id in torch.jit.annotate(List[int], torch.unique(idxs).cpu().tolist()):
-        #mask = (idxs == id).nonzero().view(-1)
         mask = torch.nonzero(idxs == id).view(-1)
         _, keep = soft_nms(boxes[mask], scores[mask], sigma, score_threshold)
         result_mask[mask[keep]] = True
