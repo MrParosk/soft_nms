@@ -1,4 +1,4 @@
-from .soft_nms import soft_nms
+from .soft_nms import soft_nms, batched_soft_nms
 import os
 import torch
 

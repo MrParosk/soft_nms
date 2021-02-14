@@ -29,7 +29,7 @@ jobs:
         conda install flake8
     - name: Run flake8
       run: |
-        flake8 . --ignore=F401 --max-line-length=127
+        bash run_flake.sh
     - name: Install dependencies
       run: |
         conda install pytorch cpuonly -c pytorch
