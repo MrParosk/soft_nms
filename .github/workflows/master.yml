@@ -11,9 +11,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8']
+        python-version: ['3.6', '3.7', '3.8', '3.9']
         os: [ubuntu-latest]
-
+        pytorch-version: ['1.7.0', '1.8.0']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -30,7 +30,7 @@ jobs:
         bash run_code_checker.sh
     - name: Install pytorch
       run: |
-        conda install pytorch cpuonly -c pytorch
+        conda install pytorch==${{ matrix.pytorch-version }} cpuonly -c pytorch
     - name: Install package and run unit tests
       run: |
         pip install .
