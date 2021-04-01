@@ -7,12 +7,12 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-test-coverage:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         python-version: ['3.6', '3.7', '3.8', '3.9']
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         pytorch-version: ['1.7.0', '1.8.0']
     steps:
     - uses: actions/checkout@v2
@@ -42,3 +42,16 @@ jobs:
         pytest --cov=pt_soft_nms --cov-report=xml        
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
+
+  build-windows:
+    runs-on: "windows-latest"
+    strategy:
+      matrix:
+        python-version: ['3.8']
+    steps:
+    - uses: ilammy/msvc-dev-cmd@v1
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+      run: |
+        pip install -r requirements-dev.txt
