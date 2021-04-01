@@ -63,4 +63,4 @@ jobs:
     - name: Install package
       run: pip install .
       env:
-        DISTUTILS_USE_SDK=1
+        DISTUTILS_USE_SDK: 1
