@@ -57,3 +57,10 @@ jobs:
     - name: Install test dependencies
       run: |
         pip install -r requirements-dev.txt
+    - name: Install pytorch
+      run: |
+        pip install torch==1.8.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+    - name: Install package and run unit tests
+      run: |
+        pip install .
+        pytest tests
