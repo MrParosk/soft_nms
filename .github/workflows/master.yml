@@ -50,8 +50,9 @@ jobs:
         python-version: ['3.8']
     steps:
     - uses: ilammy/msvc-dev-cmd@v1
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Install test dependencies
       run: |
         pip install -r requirements-dev.txt
