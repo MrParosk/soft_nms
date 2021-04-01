@@ -62,5 +62,6 @@ jobs:
         pip install torch==1.8.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install package and run unit tests
       run: |
+        set DISTUTILS_USE_SDK=1
         pip install .
         pytest tests
