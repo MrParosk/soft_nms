@@ -64,3 +64,5 @@ jobs:
       run: pip install .
       env:
         DISTUTILS_USE_SDK: 1
+    - name: Run unit tests
+      run: pytest tests
