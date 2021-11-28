@@ -1,8 +1,9 @@
 import torch
-from typing import List
+from typing import List, Tuple
 
 
-def soft_nms(boxes: torch.Tensor, scores: torch.Tensor, sigma: float, score_threshold: float = 0.0):
+def soft_nms(boxes: torch.Tensor, scores: torch.Tensor, sigma: float, score_threshold: float = 0.0) \
+        -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Performs soft-nms on the boxes (with the Gaussian function).
 
@@ -29,7 +30,8 @@ def soft_nms(boxes: torch.Tensor, scores: torch.Tensor, sigma: float, score_thre
     return torch.ops.soft_nms.soft_nms(boxes, scores, sigma, score_threshold)
 
 
-def batched_soft_nms(boxes: torch.Tensor, scores: torch.Tensor, idxs: torch.Tensor, sigma: float, score_threshold: float = 0.0):
+def batched_soft_nms(boxes: torch.Tensor, scores: torch.Tensor, idxs: torch.Tensor, sigma: float, score_threshold: float = 0.0) \
+        -> torch.Tensor:
     """
     Performs soft non-maximum suppression in a batched fashion.
     Each index value correspond to a category, and soft-nms
@@ -46,9 +48,6 @@ def batched_soft_nms(boxes: torch.Tensor, scores: torch.Tensor, idxs: torch.Tens
             decreased on overlap.
         score_threshold (float): Will filter out all updated-scores which has value than score_threshold.
     Returns:
-        updated_scores (Tensor): float tensor with the updated scores, i.e.
-            the scores after they have been decreased according to the overlap,
-            sorted in decreasing order of scores
         keep (Tensor): int64 tensor with the indices of the elements that have been kept
             by soft-nms, sorted in decreasing order of scores
     """

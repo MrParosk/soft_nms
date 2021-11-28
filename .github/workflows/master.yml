@@ -24,17 +24,17 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install test dependencies and check pep8
+    - name: Install test dependencies and check flake8
       run: |
         pip install -r requirements-dev.txt
-        bash run_code_checker.sh
+        flake8 .
     - name: Install pytorch
       run: |
         conda install pytorch==${{ matrix.pytorch-version }} cpuonly -c pytorch
     - name: Install package and run unit tests
       run: |
         pip install .
-        pytest tests
+        pytest --mypy tests/
     - name: Code coverage # Need to install in developer mode for it to get coverage report for installed package
       run: |
         pip uninstall -y pt_soft_nms
@@ -59,7 +59,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Install pytorch
       run: |
-        pip install torch==1.9.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.10.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install package
       run: pip install .
       env:
