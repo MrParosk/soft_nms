@@ -7,7 +7,18 @@ on:
     branches: [ master ]
 
 jobs:
-  build-test-coverage:
+  build-and-test:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get install -y wget unzip cmake libgtest-dev
+      - name: Fetch libtorch
+        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.10.1%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-1.10.1+cpu.zip
+      - name: Run tests
+        run: bash run_cpp_tests.sh && ./build/run_tests
+
+  build-test-coverage-python:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

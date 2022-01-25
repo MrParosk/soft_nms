@@ -1,7 +1,9 @@
-build/
-libtorch/
 .vscode/
+.venv/
 pt_soft_nms/__pycache__/
 pt_soft_nms.egg-info/
 tests/__pycache__/
+build/
 soft_nms.so
+libtorch/
+libtorch-cxx11-abi-shared-with-deps-1.10.1+cpu.zip
