@@ -1,6 +1,8 @@
 import os
+
 import torch
-from .soft_nms import soft_nms, batched_soft_nms  # noqa: F401
+
+from .soft_nms import batched_soft_nms, soft_nms  # noqa: F401
 
 if os.name == "nt":
     file = "soft_nms.pyd"

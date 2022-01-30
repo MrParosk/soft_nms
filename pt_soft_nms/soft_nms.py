@@ -1,9 +1,14 @@
-import torch
 from typing import List, Tuple
 
+import torch
 
-def soft_nms(boxes: torch.Tensor, scores: torch.Tensor, sigma: float, score_threshold: float = 0.0) \
-        -> Tuple[torch.Tensor, torch.Tensor]:
+
+def soft_nms(
+    boxes: torch.Tensor,
+    scores: torch.Tensor,
+    sigma: float,
+    score_threshold: float = 0.0,
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Performs soft-nms on the boxes (with the Gaussian function).
 
@@ -22,16 +27,23 @@ def soft_nms(boxes: torch.Tensor, scores: torch.Tensor, sigma: float, score_thre
             by soft-nms, sorted in decreasing order of scores
     """
 
-    assert len(
-        boxes.shape) == 2 and boxes.shape[-1] == 4, f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
-    assert len(
-        scores.shape) == 1, f"scores has wrong shape, expected (N,) got {scores.shape}"
+    assert (
+        len(boxes.shape) == 2 and boxes.shape[-1] == 4
+    ), f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
+    assert (
+        len(scores.shape) == 1
+    ), f"scores has wrong shape, expected (N,) got {scores.shape}"
 
     return torch.ops.soft_nms.soft_nms(boxes, scores, sigma, score_threshold)
 
 
-def batched_soft_nms(boxes: torch.Tensor, scores: torch.Tensor, idxs: torch.Tensor, sigma: float, score_threshold: float = 0.0) \
-        -> torch.Tensor:
+def batched_soft_nms(
+    boxes: torch.Tensor,
+    scores: torch.Tensor,
+    idxs: torch.Tensor,
+    sigma: float,
+    score_threshold: float = 0.0,
+) -> torch.Tensor:
     """
     Performs soft non-maximum suppression in a batched fashion.
     Each index value correspond to a category, and soft-nms
@@ -52,10 +64,12 @@ def batched_soft_nms(boxes: torch.Tensor, scores: torch.Tensor, idxs: torch.Tens
             by soft-nms, sorted in decreasing order of scores
     """
 
-    assert len(
-        boxes.shape) == 2 and boxes.shape[-1] == 4, f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
-    assert len(
-        scores.shape) == 1, f"scores has wrong shape, expected (N,) got {scores.shape}"
+    assert (
+        len(boxes.shape) == 2 and boxes.shape[-1] == 4
+    ), f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
+    assert (
+        len(scores.shape) == 1
+    ), f"scores has wrong shape, expected (N,) got {scores.shape}"
 
     result_mask = scores.new_zeros(scores.size(), dtype=torch.bool)
     for id in torch.jit.annotate(List[int], torch.unique(idxs).cpu().tolist()):
