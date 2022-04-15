@@ -15,6 +15,7 @@ torch::Tensor calculate_area(const torch::Tensor &boxes)
     return areas;
 }
 
+
 torch::Tensor calculate_iou(const torch::Tensor &boxes, const torch::Tensor &areas, const int i)
 {
     auto xx1 = torch::maximum(boxes.index({i, 0}), boxes.index({Slice(i + 1, None), 0}));
@@ -30,6 +31,7 @@ torch::Tensor calculate_iou(const torch::Tensor &boxes, const torch::Tensor &are
     auto iou = torch::div(intersection, union_);
     return iou;
 }
+
 
 void update_sorting_order(torch::Tensor &boxes, torch::Tensor &scores, torch::Tensor &areas, const int idx)
 {
@@ -59,6 +61,7 @@ void update_sorting_order(torch::Tensor &boxes, torch::Tensor &scores, torch::Te
         areas.index({max_idx}) = areas_idx;
     }
 }
+
 
 std::tuple<torch::Tensor, torch::Tensor> soft_nms(
     const torch::Tensor &boxes,
