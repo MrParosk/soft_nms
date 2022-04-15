@@ -2,6 +2,7 @@
 #include <torch/torch.h>
 #include <tuple>
 
+
 torch::Tensor calculate_area(const torch::Tensor &boxes);
 
 torch::Tensor calculate_iou(const torch::Tensor &boxes, const torch::Tensor &areas, const int i);

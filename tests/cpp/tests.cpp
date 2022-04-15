@@ -2,7 +2,7 @@
 #include "../../pt_soft_nms/csrc/soft_nms.h"
 
 
-TEST(calculate_area, test_calculate_area_single_box) {
+TEST(calculate_area, single_box) {
     auto boxes = torch::tensor({1, 2, 3, 4}, {torch::kFloat32});
     boxes = boxes.view({1, 4});
     auto areas = calculate_area(boxes);
@@ -12,7 +12,7 @@ TEST(calculate_area, test_calculate_area_single_box) {
 }
 
 
-TEST(calculate_area, test_calculate_area_multiple_boxes) {
+TEST(calculate_area, multiple_boxes) {
     auto boxes = torch::tensor({1, 2, 3, 4, 5, 6, 8, 9}, {torch::kFloat32});
     boxes = boxes.view({2, 4});
     torch::Tensor areas = calculate_area(boxes);
@@ -22,7 +22,7 @@ TEST(calculate_area, test_calculate_area_multiple_boxes) {
 }
 
 
-TEST(calculate_iou, test_calculate_iou_overlap) {
+TEST(calculate_iou, iou_two_boxes) {
     auto boxes = torch::tensor({1, 2, 3, 4, 1, 2, 2, 3}, {torch::kFloat32});
     boxes = boxes.view({2, 4});
     auto areas = torch::tensor({4, 1}, {torch::kFloat32});
@@ -34,7 +34,7 @@ TEST(calculate_iou, test_calculate_iou_overlap) {
 }
 
 
-TEST(update_sorting_order, test_update_sorting_order_swap) {
+TEST(update_sorting_order, order_swap) {
     auto boxes = torch::tensor({1, 2, 3, 4, 5, 6, 8, 9}, {torch::kFloat32});
     boxes = boxes.view({2, 4});
     auto areas = torch::tensor({4, 9}, {torch::kFloat32});
@@ -54,7 +54,7 @@ TEST(update_sorting_order, test_update_sorting_order_swap) {
 }
 
 
-TEST(update_sorting_order, test_update_sorting_order_no_swap) {
+TEST(update_sorting_order, no_swap) {
     auto boxes = torch::tensor({1, 2, 3, 4, 5, 6, 8, 9}, {torch::kFloat32});
     boxes = boxes.view({2, 4});
     auto areas = torch::tensor({4, 9}, {torch::kFloat32});
