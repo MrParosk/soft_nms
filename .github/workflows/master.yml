@@ -39,7 +39,7 @@ jobs:
       run: |
         pip install -r requirements-dev.txt
         flake8 .
-        isort -c . --profile black
+        isort . --check
         black . --check
     - name: Install pytorch
       run: |

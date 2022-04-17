@@ -16,4 +16,4 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
-        args: [-c, --profile black]
+        args: [--check]
