@@ -40,7 +40,7 @@ jobs:
         pip install -r requirements-dev.txt
         flake8 .
         isort . --check
-        black . --check
+        black . --check --line-length=128
     - name: Install pytorch
       run: |
         conda install pytorch==${{ matrix.pytorch-version }} cpuonly -c pytorch
