@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # ATM cmake is only used for running cpp-tests
 
 current_dir=$(pwd) 

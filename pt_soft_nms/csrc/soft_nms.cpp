@@ -1,12 +1,9 @@
-#include <torch/torch.h>
 #include "soft_nms.h"
-
+#include <torch/torch.h>
 
 using namespace torch::indexing;
 
-
-torch::Tensor calculate_area(const torch::Tensor &boxes)
-{
+torch::Tensor calculate_area(const torch::Tensor& boxes) {
     /*
     Computes the area of the boxes.
 
@@ -21,9 +18,7 @@ torch::Tensor calculate_area(const torch::Tensor &boxes)
     return areas;
 }
 
-
-torch::Tensor calculate_iou(const torch::Tensor &boxes, const torch::Tensor &areas, const int &idx)
-{
+torch::Tensor calculate_iou(const torch::Tensor& boxes, const torch::Tensor& areas, const int& idx) {
     /*
     Computes the IOU between the box at index idx and all boxes "below" it (i.e. idx+1 until the end of the tensor).
 
@@ -45,9 +40,7 @@ torch::Tensor calculate_iou(const torch::Tensor &boxes, const torch::Tensor &are
     return iou;
 }
 
-
-void update_sorting_order(torch::Tensor &boxes, torch::Tensor &scores, torch::Tensor &areas, const int &idx)
-{
+void update_sorting_order(torch::Tensor& boxes, torch::Tensor& scores, torch::Tensor& areas, const int& idx) {
     /*
     Since the scores get updated with soft-nms we need to "re-sort" them and their corresponding boxes.
 
@@ -61,8 +54,7 @@ void update_sorting_order(torch::Tensor &boxes, torch::Tensor &scores, torch::Te
     // max_idx is computed from sliced data, therefore need to convert it to "global" max idx
     auto max_idx = t_max_idx.item<int>() + idx + 1;
 
-    if (scores.index({idx}).item<float>() < max_score.item<float>())
-    {
+    if (scores.index({idx}).item<float>() < max_score.item<float>()) {
         auto boxes_idx = boxes.index({idx}).clone();
         auto boxes_max = boxes.index({max_idx}).clone();
         boxes.index({idx}) = boxes_max;
@@ -80,29 +72,25 @@ void update_sorting_order(torch::Tensor &boxes, torch::Tensor &scores, torch::Te
     }
 }
 
-
 std::tuple<torch::Tensor, torch::Tensor> soft_nms(
-    const torch::Tensor &boxes,
-    const torch::Tensor &scores,
+    const torch::Tensor& boxes,
+    const torch::Tensor& scores,
     const double sigma,
-    const double score_threshold)
-{
+    const double score_threshold) {
     /*
     Performs soft-nms on the boxes (with the Gaussian function).
 
     Args:
-        boxes (Tensor[N, 4]): Boxes to perform NMS on. They are expected to be in
-           (x_min, y_min, x_max, y_max) format.
+        boxes (Tensor[N, 4]): Boxes to perform NMS on. They are expected to be in (x_min, y_min, x_max, y_max) format.
         scores (Tensor[N]): Scores for each one of the boxes.
-        sigma (double): The sigma parameter described in the paper which controls how much the score is
-            decreased on overlap.
+        sigma (double): The sigma parameter described in the paper which controls how much the score is decreased on overlap.
         score_threshold (double): Will filter out all updated-scores which has value than score_threshold.
+
     Returns:
         updated_scores (Tensor): float tensor with the updated scores, i.e.
-            the scores after they have been decreased according to the overlap,
+            the scores after they have been decreased according to the overlap, sorted in decreasing order of scores.
+        keep (Tensor): int64 tensor with the indices of the elements that have been kept by soft-nms,
             sorted in decreasing order of scores.
-        keep (Tensor): int64 tensor with the indices of the elements that have been kept
-            by soft-nms, sorted in decreasing order of scores.
     */
 
     int num_element = boxes.size(0);
@@ -113,8 +101,7 @@ std::tuple<torch::Tensor, torch::Tensor> soft_nms(
     auto scores_updated = scores.clone();
     auto areas = calculate_area(boxes_indicies);
 
-    for (int i = 0; i < num_element - 1; i++)
-    {
+    for (int i = 0; i < num_element - 1; i++) {
         update_sorting_order(boxes_indicies, scores_updated, areas, i);
         auto iou = calculate_iou(boxes_indicies, areas, i);
         auto weight = torch::exp(-(iou * iou) / sigma);

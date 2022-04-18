@@ -12,11 +12,13 @@ jobs:
       steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: sudo apt-get install -y wget unzip cmake libgtest-dev
+        run: sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
       - name: Fetch libtorch
         run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.11.0%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-1.11.0+cpu.zip
+      - name: Run format checking
+        run: bash scripts/run_format.sh -c
       - name: Run tests
-        run: bash run_cpp_tests.sh
+        run: bash scripts/run_cpp_tests.sh
 
   build-test-coverage-python:
     runs-on: ${{ matrix.os }}
