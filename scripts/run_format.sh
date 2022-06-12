@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 format_folder () {
     folder=$1
     check=$2
