@@ -14,19 +14,56 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
       - name: Fetch libtorch
-        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.12.1%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-1.12.1+cpu.zip
+        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.13.0%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-1.13.0+cpu.zip
       - name: Run format checking
         run: bash scripts/run_format.sh -c
       - name: Run tests
         run: bash scripts/run_cpp_tests.sh
 
-  build-test-coverage-python:
+  linting-code-coverage-python:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install test dependencies
+      run: |
+        pip install -r requirements-dev.txt
+    - name: Running flake8
+      run: |
+        flake8 .
+    - name: Running isort
+      run: |
+        isort . --check
+    - name: Running black
+      run: |
+        black . --check --line-length=128
+    - name: Running mypy
+      run: |
+        mypy .
+    - name: Install pytorch
+      run: |
+        conda install pytorch==1.13.0 cpuonly -c pytorch
+    - name: Code coverage
+      run: |
+        pip install -e .
+        pytest --cov=pt_soft_nms --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+
+  test-python:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ['3.8', '3.9']
+        python-version: ['3.8', '3.9', '3.10']
         os: [ubuntu-latest]
-        pytorch-version: ['1.11.0', '1.12.1']
+        pytorch-version: ['1.12.1', '1.13.0']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -37,32 +74,22 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install test dependencies and linting
-      run: |
-        pip install -r requirements-dev.txt
-        flake8 .
-        isort . --check
-        black . --check --line-length=128
     - name: Install pytorch
       run: |
         conda install pytorch==${{ matrix.pytorch-version }} cpuonly -c pytorch
-    - name: Install package and run unit tests
+    - name: Install package
       run: |
+        pip install -r requirements-dev.txt
         pip install .
-        pytest --mypy tests/
-    - name: Code coverage # Need to install in developer mode for it to get coverage report for installed package
+    - name: Run unit tests
       run: |
-        pip uninstall -y pt_soft_nms
-        pip install -e .
-        pytest --cov=pt_soft_nms --cov-report=xml        
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+        pytest tests/
 
   build-windows:
     runs-on: "windows-latest"
     strategy:
       matrix:
-        python-version: ['3.8']
+        python-version: ['3.9']
     steps:
     - uses: actions/checkout@v2
     - uses: ilammy/msvc-dev-cmd@v1
@@ -74,10 +101,10 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Install pytorch
       run: |
-        pip install torch==1.12.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.13.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install package
       run: pip install .
       env:
         DISTUTILS_USE_SDK: 1
     - name: Run unit tests
-      run: pytest tests
+      run: pytest tests/
