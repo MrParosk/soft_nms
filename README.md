@@ -20,6 +20,7 @@ Note that if you are using Windows, you need MSVC installed.
 
 ```python
 import torch
+
 from pt_soft_nms import batched_soft_nms, soft_nms
 
 sigma = 0.5
