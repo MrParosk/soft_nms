@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
       - name: Fetch libtorch
-        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.13.0%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-1.13.0+cpu.zip
+        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.13.1%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-1.13.1+cpu.zip
       - name: Run format checking
         run: bash scripts/run_format.sh -c
       - name: Run tests
@@ -49,7 +49,7 @@ jobs:
         mypy .
     - name: Install pytorch
       run: |
-        conda install pytorch==1.13.0 cpuonly -c pytorch
+        conda install pytorch==1.13.1 cpuonly -c pytorch
     - name: Code coverage
       run: |
         pip install -e .
@@ -63,7 +63,7 @@ jobs:
       matrix:
         python-version: ['3.8', '3.9', '3.10']
         os: [ubuntu-latest]
-        pytorch-version: ['1.12.1', '1.13.0']
+        pytorch-version: ['1.12.1', '1.13.1']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -101,7 +101,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Install pytorch
       run: |
-        pip install torch==1.13.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.13.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install package
       run: pip install .
       env:

@@ -15,3 +15,23 @@ pip install git+https://github.com/MrParosk/soft_nms.git
 ```
 
 Note that if you are using Windows, you need MSVC installed.
+
+## Example usage
+
+```python
+import torch
+from pt_soft_nms import batched_soft_nms, soft_nms
+
+sigma = 0.5
+score_threshold = 0.1
+
+boxes = torch.tensor([[20, 20, 40, 40], [10, 10, 20, 20], [20, 20, 35, 35]], device="cpu", dtype=torch.float)
+scores = torch.tensor([0.5, 0.9, 0.11], device="cpu", dtype=torch.float)
+updated_scores, keep = soft_nms(boxes, scores, sigma, score_threshold)
+# updated_scores=tensor([0.9000, 0.5000]), keep=tensor([1, 0])
+
+# With batched_soft_nms, the soft-nms will be applied per batch, which is specified with indicies
+indicies = torch.tensor([0, 0, 1], device="cpu")
+keep_batch = batched_soft_nms(boxes, scores, indicies, sigma, score_threshold)
+# keep_batch=tensor([1, 0, 2])
+```
