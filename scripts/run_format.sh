@@ -6,7 +6,7 @@ format_folder () {
     folder=$1
     check=$2
 
-    if [ $check = true ] 
+    if [ $check = true ]
     then
         echo "Running format checking on folder: ${folder}"
         extra_flags='--dry-run --Werror'
