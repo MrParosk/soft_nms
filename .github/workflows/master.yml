@@ -12,7 +12,8 @@ jobs:
       steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
+        run: |
+          sudo apt update && sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
       - name: Fetch libtorch
         run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.0.1%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-2.0.1+cpu.zip
       - name: Run format checking
@@ -28,10 +29,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.10'
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
     - name: Install test dependencies
       run: |
         pip install -r requirements-dev.txt
@@ -49,7 +46,7 @@ jobs:
         mypy .
     - name: Install pytorch
       run: |
-        conda install pytorch==2.0.1 cpuonly -c pytorch
+        pip install torch==2.0.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Code coverage
       run: |
         pip install -e .
@@ -70,14 +67,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
     - name: Install pytorch
       run: |
-        conda install -c conda-forge pybind11
-        conda install pytorch==${{ matrix.pytorch-version }} cpuonly -c pytorch
+        pip install torch==${{ matrix.pytorch-version }}+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install package
       run: |
         pip install -r requirements-dev.txt
