@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import torch
@@ -16,12 +17,15 @@ class TestCompileSoftNMS(unittest.TestCase):
         self.sigma = 0.5
         self.threshold = 0.1
 
-    @unittest.skipIf(_under_version_two(), "Torch version < 2.0")
+    @unittest.skipIf(_under_version_two() or os.name == "nt", "Torch version < 2.0 or running on Windows")
     def test_compile_cpu(self):
         compiled_soft_nms = torch.compile(soft_nms)
         _ = compiled_soft_nms(self.boxes, self.scores, self.sigma, self.threshold)
 
-    @unittest.skipIf(_under_version_two() or not torch.cuda.is_available(), "Torch version < 2.0 or CUDA not available")
+    @unittest.skipIf(
+        _under_version_two() or not torch.cuda.is_available() or os.name == "nt",
+        "Torch version < 2.0 or CUDA not available or running on Windows",
+    )
     def test_compile_cuda(self):
         compiled_soft_nms = torch.compile(soft_nms)
         _ = compiled_soft_nms(self.boxes.cuda(), self.scores.cuda(), self.sigma, self.threshold)
@@ -35,12 +39,15 @@ class TestCompileBatchedSoftNMS(unittest.TestCase):
         self.sigma = 0.5
         self.threshold = 0.1
 
-    @unittest.skipIf(_under_version_two(), "Torch version < 2.0")
+    @unittest.skipIf(_under_version_two() or os.name == "nt", "Torch version < 2.0 or running on Windows")
     def test_compile_cpu(self):
         compiled_soft_nms = torch.compile(batched_soft_nms)
         _ = compiled_soft_nms(self.boxes, self.scores, self.idxs, self.sigma, self.threshold)
 
-    @unittest.skipIf(_under_version_two() or not torch.cuda.is_available(), "Torch version < 2.0 or CUDA not available")
+    @unittest.skipIf(
+        _under_version_two() or not torch.cuda.is_available() or os.name == "nt",
+        "Torch version < 2.0 or CUDA not available or running on Windows",
+    )
     def test_compile_cuda(self):
         compiled_soft_nms = torch.compile(batched_soft_nms)
         _ = compiled_soft_nms(self.boxes.cuda(), self.scores.cuda(), self.idxs.cuda(), self.sigma, self.threshold)
