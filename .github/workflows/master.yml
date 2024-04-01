@@ -19,7 +19,7 @@ jobs:
       - name: Run format checking
         run: bash scripts/run_format.sh -c
       - name: Run tests
-        run: USE_MKLDNN=0 bash scripts/run_cpp_tests.sh
+        run: bash scripts/run_cpp_tests.sh
 
   linting-code-coverage-python:
     runs-on: ubuntu-latest
