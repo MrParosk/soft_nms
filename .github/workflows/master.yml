@@ -13,13 +13,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          sudo apt update && sudo apt-get install -y wget unzip cmake libgtest-dev clang-format libdnnl-dev
+          sudo apt update && sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
       - name: Fetch libtorch
         run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.2.2%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-2.2.2+cpu.zip
       - name: Run format checking
         run: bash scripts/run_format.sh -c
       - name: Run tests
-        run: bash scripts/run_cpp_tests.sh
+        run: USE_MKLDNN=0 bash scripts/run_cpp_tests.sh
 
   linting-code-coverage-python:
     runs-on: ubuntu-latest
