@@ -15,7 +15,7 @@ jobs:
         run: |
           sudo apt update && sudo apt-get install -y wget unzip cmake libgtest-dev clang-format
       - name: Fetch libtorch
-        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.3.0%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-2.3.0+cpu.zip
+        run: wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.3.1%2Bcpu.zip && unzip libtorch-cxx11-abi-shared-with-deps-2.3.1+cpu.zip
       - name: Run format checking
         run: bash scripts/run_format.sh -c
       - name: Run tests
@@ -46,7 +46,7 @@ jobs:
         mypy .
     - name: Install pytorch
       run: |
-        python -m pip install torch==2.3.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        python -m pip install torch==2.3.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Code coverage
       run: |
         python -m pip install --no-build-isolation -e .
@@ -62,7 +62,7 @@ jobs:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
         os: [ubuntu-latest]
-        pytorch-version: ['1.13.1', '2.3.0']
+        pytorch-version: ['1.13.1', '2.3.1']
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
@@ -96,7 +96,7 @@ jobs:
         python -m pip install -r requirements-dev.txt
     - name: Install pytorch
       run: |
-        python -m pip install torch==2.3.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+        python -m pip install torch==2.3.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
     - name: Install package
       run: |
         python -m pip install --no-build-isolation .
