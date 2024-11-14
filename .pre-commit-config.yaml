@@ -15,10 +15,15 @@ repos:
     hooks:
       - id: isort
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+  - repo: local
     hooks:
-      - id: mypy
+    - id: mypy
+      # note: assumes python env is setup and activated
+      name: mypy
+      entry: mypy .
+      language: system
+      pass_filenames: false
+      types: [python]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0

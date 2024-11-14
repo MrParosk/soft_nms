@@ -11,4 +11,4 @@ else:
 
 # TODO: see why the .so files is installed below our package folder
 this_dir = os.path.dirname(__file__)
-torch.ops.load_library(os.path.join(this_dir, "..", file))
+torch.ops.load_library(os.path.join(this_dir, "..", file))  # type: ignore

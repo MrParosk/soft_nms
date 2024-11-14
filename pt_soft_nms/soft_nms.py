@@ -30,7 +30,7 @@ def soft_nms(
     assert len(boxes.shape) == 2 and boxes.shape[-1] == 4, f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
     assert len(scores.shape) == 1, f"scores has wrong shape, expected (N,) got {scores.shape}"
 
-    return torch.ops.soft_nms.soft_nms(boxes, scores, sigma, score_threshold)
+    return torch.ops.soft_nms.soft_nms(boxes, scores, sigma, score_threshold)  # type: ignore
 
 
 def batched_soft_nms(
@@ -64,7 +64,7 @@ def batched_soft_nms(
     assert len(scores.shape) == 1, f"scores has wrong shape, expected (N,) got {scores.shape}"
 
     result_mask = scores.new_zeros(scores.size(), dtype=torch.bool)
-    for id in torch.jit.annotate(List[int], torch.unique(idxs).cpu().tolist()):
+    for id in torch.jit.annotate(List[int], torch.unique(idxs).cpu().tolist()):  # type: ignore
         mask = torch.nonzero(idxs == id).view(-1)
         _, keep = soft_nms(boxes[mask], scores[mask], sigma, score_threshold)
         result_mask[mask[keep]] = True
