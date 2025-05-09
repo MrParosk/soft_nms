@@ -9,5 +9,13 @@ PyMODINIT_FUNC PyInit_soft_nms(void) {
 #endif
 
 TORCH_LIBRARY(soft_nms, m) {
-    m.def("soft_nms", &soft_nms);
+    m.def("soft_nms(Tensor boxes, Tensor scores, float sigma, float score_threshold) -> (Tensor, Tensor)");
+}
+
+TORCH_LIBRARY_IMPL(soft_nms, CPU, m) {
+    m.impl("soft_nms", &soft_nms);
+}
+
+TORCH_LIBRARY_IMPL(soft_nms, CUDA, m) {
+    m.impl("soft_nms", &soft_nms);
 }

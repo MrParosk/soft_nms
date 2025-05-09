@@ -6,7 +6,7 @@ from setuptools import setup
 from torch.utils.cpp_extension import BuildExtension, CppExtension
 
 torch_ver = [int(x) for x in torch.__version__.split(".")[:2]]
-assert torch_ver >= [1, 7], "Requires PyTorch >= 1.7"
+assert torch_ver >= [2, 4], "Requires PyTorch >= 2.4"
 
 
 def get_extension():
