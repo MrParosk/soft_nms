@@ -25,7 +25,7 @@ setup(
     version="0.1",
     packages=("pt_soft_nms",),
     description="PyTorch implementation of the soft-nms algorithm",
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[],
     ext_modules=get_extension(),
     cmdclass={"build_ext": BuildExtension.with_options(no_python_abi_suffix=True)},

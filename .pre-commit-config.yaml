@@ -1,17 +1,17 @@
 repos:
   - repo: https://github.com/pycqa/flake8
-    rev: 7.2.0
+    rev: 7.3.0
     hooks:
       - id: flake8
 
   - repo: https://github.com/psf/black
-    rev: 25.1.0
+    rev: 25.11.0
     hooks:
       - id: black
         args: [--line-length=128]
 
   - repo: https://github.com/PyCQA/isort
-    rev: 6.0.1
+    rev: 7.0.0
     hooks:
       - id: isort
 
@@ -26,7 +26,7 @@ repos:
       types: [python]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
