@@ -38,9 +38,8 @@ class TestCompileBatchedSoftNMS(unittest.TestCase):
         self.sigma = 0.5
         self.threshold = 0.1
 
-    @unittest.skip("TODO: fix compile for batched_soft_nms")
     def test_compile_cpu(self):
-        compiled_soft_nms = torch.compile(batched_soft_nms)
+        compiled_soft_nms = torch.compile(batched_soft_nms, fullgraph=True)
         _ = compiled_soft_nms(self.boxes, self.scores, self.idxs, self.sigma, self.threshold)
 
     @unittest.skip("TODO: fix compile for batched_soft_nms")
