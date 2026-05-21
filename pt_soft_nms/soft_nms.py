@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Tuple
 
 import torch
 
@@ -63,11 +63,10 @@ def batched_soft_nms(
     assert len(boxes.shape) == 2 and boxes.shape[-1] == 4, f"boxes has wrong shape, expected (N, 4), got {boxes.shape}"
     assert len(scores.shape) == 1, f"scores has wrong shape, expected (N,) got {scores.shape}"
 
-    result_mask = scores.new_zeros(scores.size(), dtype=torch.bool)
-    for id in torch.jit.annotate(List[int], torch.unique(idxs).cpu().tolist()):  # type: ignore
-        mask = torch.nonzero(idxs == id).view(-1)
-        _, keep = soft_nms(boxes[mask], scores[mask], sigma, score_threshold)
-        result_mask[mask[keep]] = True
-    keep = torch.nonzero(result_mask).view(-1)
-    keep = keep[scores[keep].argsort(descending=True)]
+    # Shift each class into a non-overlapping region of space so a single
+    # soft_nms call treats classes independently (IoU between classes = 0).
+    max_coordinate = boxes.max()
+    offsets = idxs.to(boxes) * (max_coordinate + 1)
+    boxes_for_nms = boxes + offsets[:, None]
+    _, keep = soft_nms(boxes_for_nms, scores, sigma, score_threshold)
     return keep

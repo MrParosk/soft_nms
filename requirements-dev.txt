@@ -1,8 +1,8 @@
-black==25.11.0
+black==26.5.1
 flake8==7.3.0
-isort==7.0.0
-mypy==1.18.2
-pre-commit==4.5.0
-pytest==9.0.1
-pytest-cov==7.0.0
-wheel==0.45.1
+isort==8.0.1
+mypy==2.1.0
+pre-commit==4.6.0
+pytest==9.0.3
+pytest-cov==7.1.0
+wheel==0.47.0
