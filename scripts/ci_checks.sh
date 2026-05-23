@@ -2,14 +2,11 @@
 
 set -e
 
-echo 'running flake8'
-flake8 .
+echo 'running ruff lint'
+ruff check .
 
-echo 'running isort'
-isort . --check
-
-echo 'running black'
-black . --check --line-length=128
+echo 'running ruff format'
+ruff format . --check
 
 echo 'running mypy'
 mypy .
